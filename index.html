@@ -39,17 +39,16 @@ h1 {
 }
 
 .on { 
-    background-color: #4CAF50 !important; /* Warna hijau untuk tombol ON */
+    background-color: #4CAF50 !important;
 }
 
 .off { 
-    background-color: #f44336 !important; /* Warna merah untuk tombol OFF */
+    background-color: #f44336 !important;
 }
 
 .button:active {
-    transform: scale(0.95); /* Efek kecil saat tombol ditekan */
+    transform: scale(0.95);
 }
-
     </style>
 </head>
 <body>
@@ -59,10 +58,6 @@ h1 {
         <p>Lampu 1 - Status <span id="output26State">off</span></p>
         <p><a id="btn26" class="button on">ON</a></p>
         <p>Arus masuk: <span id="current26">0.00</span> A</p>
-
-        <p>Lampu 2 - Status <span id="output27State">off</span></p>
-        <p><a id="btn27" class="button on">ON</a></p>
-        <p>Arus masuk: <span id="current27">0.00</span> A</p>
     </div>
 
     <!-- Firebase SDK -->
@@ -88,7 +83,6 @@ h1 {
 
         // Ambil elemen tombol
         let btn26 = document.getElementById("btn26");
-        let btn27 = document.getElementById("btn27");
 
         // Update tampilan tombol
         function updateButton(btn, pin, state) {
@@ -106,12 +100,11 @@ h1 {
             }
         }
 
-
         // Set lampu di Firebase
         function setLampu(pin, state) {
             let updates = { state: state };
 
-            // kalau OFF → arus kosong, tapi format string dengan 2 angka desimal
+            // kalau OFF → arus kosong
             if (state === "off") {
                 updates.arus = "0.00";
             }
@@ -119,18 +112,11 @@ h1 {
             set(ref(db, "lampu/" + pin), updates);
         }
 
-
         // Event listener tombol
         btn26.addEventListener("click", function () {
             let currentState = document.getElementById("output26State").textContent;
             let newState = currentState === "on" ? "off" : "on";
             setLampu(26, newState);
-        });
-
-        btn27.addEventListener("click", function () {
-            let currentState = document.getElementById("output27State").textContent;
-            let newState = currentState === "on" ? "off" : "on";
-            setLampu(27, newState); // ✅ diperbaiki dari 2 → 27
         });
 
         // Listener realtime Firebase
@@ -142,16 +128,6 @@ h1 {
                     parseFloat(data.arus ?? 0).toFixed(2);
             }
         });
-
-        onValue(ref(db, "lampu/27"), (snapshot) => {
-            let data = snapshot.val();
-            if (data) {
-                updateButton(btn27, 27, data.state);
-                document.getElementById("current27").textContent = 
-                    parseFloat(data.arus ?? 0).toFixed(2);
-            }
-        });
-
     </script>
 </body>
 </html>
